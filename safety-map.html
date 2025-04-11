@@ -459,7 +459,51 @@
         <i class="fas fa-ellipsis-v"></i>
     </button>
 
-    
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="user-profile glass-card">
+                <img src="https://i.pravatar.cc/150?img=32" alt="User Avatar" class="user-avatar">
+                <div class="user-info">
+                    <h6>Sarah Johnson</h6> <!-- Replace with dynamic user name if needed -->
+                    <small>Community Member</small>
+                </div>
+            </div>
+
+            <ul class="sidebar-nav" style="list-style: none; padding: 0;">
+                <li class="nav-item">
+                    <a href="dashboard.html" class="nav-link">
+                        <i class="fas fa-home"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="safety-map.html" class="nav-link active">
+                        <i class="fas fa-map-marked-alt"></i>
+                        Safety Map
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="live-tracker.html" class="nav-link">
+                        <i class="fas fa-location-arrow"></i>
+                        Live Tracker
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="community.html" class="nav-link">
+                        <i class="fas fa-users"></i>
+                        Community
+                    </a>
+                </li>
+                <li class="nav-item mt-auto">
+                    <a href="auth.html" class="nav-link">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
         
         <!-- Main Content -->
         <div class="main-content">
@@ -712,84 +756,72 @@
 
         // Replace the crimeData array with the complete JSON data
         const crimeData = [
-            {latitude: 12.9716, longitude: 77.5946, risk_level: 2, location: "Bangalore - MG Road"},
-            {latitude: 12.9850, longitude: 77.5533, risk_level: 1, location: "Bangalore - Malleshwaram"},
-            {latitude: 12.9302, longitude: 77.6853, risk_level: 3, location: "Bangalore - Electronic City"},
-            {latitude: 12.9979, longitude: 77.5920, risk_level: 2, location: "Bangalore - Indiranagar"},
-            {latitude: 12.9346, longitude: 77.6206, risk_level: 3, location: "Bangalore - Koramangala"},
-            {latitude: 12.9783, longitude: 77.6408, risk_level: 1, location: "Bangalore - Whitefield"},
-            {latitude: 12.9254, longitude: 77.5973, risk_level: 2, location: "Bangalore - BTM Layout"},
-            {latitude: 13.0298, longitude: 77.5441, risk_level: 2, location: "Bangalore - Yeshwanthpur"},
-            {latitude: 12.9299, longitude: 77.5222, risk_level: 1, location: "Bangalore - Kengeri"},
-            {latitude: 13.0641, longitude: 77.5876, risk_level: 2, location: "Bangalore - Hebbal"},
-            {latitude: 15.3647, longitude: 75.1240, risk_level: 2, location: "Hubli - City Center"},
-            {latitude: 15.3573, longitude: 75.1232, risk_level: 3, location: "Hubli - Railway Station"},
-            {latitude: 15.3500, longitude: 75.1167, risk_level: 1, location: "Hubli - Airport Area"},
-            {latitude: 15.3349, longitude: 75.1335, risk_level: 2, location: "Hubli - Industrial Area"},
-            {latitude: 15.4589, longitude: 75.0078, risk_level: 1, location: "Hubli - Suburban Area"},
-            {latitude: 15.2117, longitude: 75.2903, risk_level: 3, location: "Hubli-Dharwad Highway"},
-            {latitude: 15.4553, longitude: 75.0070, risk_level: 2, location: "Dharwad - City Center"},
-            {latitude: 15.4483, longitude: 75.0054, risk_level: 1, location: "Dharwad - University Campus"},
-            {latitude: 15.4677, longitude: 75.0216, risk_level: 2, location: "Dharwad - Railway Station"},
-            {latitude: 15.1765, longitude: 75.3351, risk_level: 2, location: "Haliyal - Town Center"},
-            {latitude: 15.0885, longitude: 75.4471, risk_level: 3, location: "Haliyal - Industrial Zone"},
-            {latitude: 15.1589, longitude: 75.3575, risk_level: 1, location: "Haliyal - Residential Area"},
-            {latitude: 14.8162, longitude: 74.1341, risk_level: 2, location: "Karwar - Beach Road"},
-            {latitude: 14.8136, longitude: 74.1300, risk_level: 3, location: "Karwar - Port Area"},
-            {latitude: 14.8000, longitude: 74.1300, risk_level: 1, location: "Karwar - City Center"},
-            {latitude: 15.3227, longitude: 74.7549, risk_level: 1, location: "KLS VDI Institute of Technology"},
-            {latitude: 15.3329, longitude: 74.7547, risk_level: 1, location: "KLS VDI Campus Hostels"},
-            {latitude: 15.3280, longitude: 74.7550, risk_level: 1, location: "KLS VDI Sports Ground"},
-            {latitude: 15.3297, longitude: 74.7583, risk_level: 2, location: "Haliyal Bus Stand"},
-            {latitude: 15.3305, longitude: 74.7572, risk_level: 1, location: "Government High School Haliyal"},
-            {latitude: 15.3312, longitude: 74.7561, risk_level: 1, location: "Haliyal PU College"},
-            {latitude: 15.3294, longitude: 74.7566, risk_level: 2, location: "Haliyal Main Market"},
-            {latitude: 15.3289, longitude: 74.7571, risk_level: 2, location: "Gandhi Chowk"},
-            {latitude: 15.3287, longitude: 74.7568, risk_level: 1, location: "Municipal Office Area"},
-            {latitude: 15.3291, longitude: 74.7563, risk_level: 2, location: "Old Bus Stand Area"},
-            {latitude: 15.3298, longitude: 74.7559, risk_level: 2, location: "State Bank Circle"},
-            {latitude: 15.3301, longitude: 74.7557, risk_level: 1, location: "Post Office Area"},
-            {latitude: 15.3286, longitude: 74.7575, risk_level: 2, location: "Weekly Market Ground"},
-            {latitude: 15.3276, longitude: 74.7561, risk_level: 1, location: "Teachers Colony"},
-            {latitude: 15.3282, longitude: 74.7553, risk_level: 1, location: "Bank Colony"},
-            {latitude: 15.3271, longitude: 74.7568, risk_level: 1, location: "Revenue Layout"},
-            {latitude: 15.3265, longitude: 74.7572, risk_level: 1, location: "New Extension Area"},
-            {latitude: 15.3259, longitude: 74.7565, risk_level: 1, location: "Police Quarters"},
-            {latitude: 15.3288, longitude: 74.7558, risk_level: 1, location: "Civil Station Area"},
-            {latitude: 15.3315, longitude: 74.7545, risk_level: 2, location: "Industrial Estate Haliyal"},
-            {latitude: 15.3308, longitude: 74.7538, risk_level: 3, location: "Timber Market Area"},
-            {latitude: 15.3320, longitude: 74.7552, risk_level: 2, location: "Warehouse Area"},
-            {latitude: 15.3312, longitude: 74.7568, risk_level: 2, location: "Commercial Complex"},
-            {latitude: 15.3305, longitude: 74.7575, risk_level: 2, location: "Transport Nagar"},
-            {latitude: 15.3293, longitude: 74.7562, risk_level: 1, location: "Government Hospital"},
-            {latitude: 15.3287, longitude: 74.7559, risk_level: 1, location: "Primary Health Center"},
-            {latitude: 15.3295, longitude: 74.7556, risk_level: 1, location: "Red Cross Center"},
-            {latitude: 15.3290, longitude: 74.7564, risk_level: 1, location: "Main Temple"},
-            {latitude: 15.3285, longitude: 74.7569, risk_level: 1, location: "Jama Masjid"},
-            {latitude: 15.3292, longitude: 74.7573, risk_level: 1, location: "Church Area"},
-            {latitude: 15.3335, longitude: 74.7580, risk_level: 2, location: "Haliyal-Dandeli Road Junction"},
-            {latitude: 15.3245, longitude: 74.7590, risk_level: 2, location: "Haliyal-Yellapur Road"},
-            {latitude: 15.3315, longitude: 74.7520, risk_level: 3, location: "Forest Border Area"},
-            {latitude: 15.3260, longitude: 74.7530, risk_level: 2, location: "Railway Crossing Area"},
-            {latitude: 15.3350, longitude: 74.7560, risk_level: 2, location: "Highway Junction"},
-            {latitude: 15.3240, longitude: 74.7540, risk_level: 1, location: "Agricultural Fields North"},
-            {latitude: 15.3220, longitude: 74.7570, risk_level: 1, location: "Agricultural Fields South"},
-            {latitude: 15.3270, longitude: 74.7520, risk_level: 1, location: "Farming Community Area"},
-            {latitude: 15.3283, longitude: 74.7567, risk_level: 1, location: "Town Park"},
-            {latitude: 15.3278, longitude: 74.7571, risk_level: 1, location: "Children's Park"},
-            {latitude: 15.3286, longitude: 74.7563, risk_level: 1, location: "Sports Ground"},
-            {latitude: 15.3310, longitude: 74.7585, risk_level: 3, location: "Isolated Industrial Zone"},
-            {latitude: 15.3325, longitude: 74.7540, risk_level: 3, location: "Remote Forest Path"},
-            {latitude: 15.3318, longitude: 74.7565, risk_level: 3, location: "Unmanned Railway Area"},
-            {latitude: 15.3330, longitude: 74.7575, risk_level: 3, location: "Abandoned Warehouse Zone"},
-            {latitude: 15.3295, longitude: 74.7580, risk_level: 2, location: "Night Market Area"},
-            {latitude: 15.3305, longitude: 74.7565, risk_level: 2, location: "Busy Junction"},
-            {latitude: 15.3315, longitude: 74.7570, risk_level: 2, location: "Transport Hub"},
-            {latitude: 15.3300, longitude: 74.7555, risk_level: 2, location: "Market Extension"},
-            {latitude: 15.3275, longitude: 74.7565, risk_level: 1, location: "Residential Complex"},
-            {latitude: 15.3280, longitude: 74.7560, risk_level: 1, location: "School Zone"},
-            {latitude: 15.3285, longitude: 74.7555, risk_level: 1, location: "Hospital Area"},
-            {latitude: 15.3290, longitude: 74.7550, risk_level: 1, location: "Government Quarters"}
+            // Safer areas - Lower risk levels
+            {latitude: 12.9716, longitude: 77.5946, risk_level: 2, location: "Bangalore - MG Road", description: "Occasional pickpocketing reported", timestamp: new Date().toISOString(), address: "MG Road, Bengaluru", user_submitted: false},
+            {latitude: 12.9850, longitude: 77.5533, risk_level: 1, location: "Bangalore - Malleshwaram", description: "Well-lit residential area", timestamp: new Date().toISOString(), address: "Malleshwaram, Bengaluru", user_submitted: false},
+            {latitude: 12.9979, longitude: 77.5920, risk_level: 2, location: "Bangalore - Indiranagar", description: "Safe during day, occasional incidents at night", timestamp: new Date().toISOString(), address: "Indiranagar, Bengaluru", user_submitted: false},
+            {latitude: 12.9783, longitude: 77.6408, risk_level: 1, location: "Bangalore - Whitefield", description: "Corporate area, well-monitored", timestamp: new Date().toISOString(), address: "Whitefield, Bengaluru", user_submitted: false},
+            
+            // Moderate risk areas
+            {latitude: 12.9302, longitude: 77.6853, risk_level: 3, location: "Bangalore - Electronic City", description: "Isolated spots after work hours", timestamp: new Date().toISOString(), address: "Electronic City, Bengaluru", user_submitted: false},
+            {latitude: 12.9346, longitude: 77.6206, risk_level: 2, location: "Bangalore - Koramangala", description: "Generally safe but some incidents reported", timestamp: new Date().toISOString(), address: "Koramangala, Bengaluru", user_submitted: false},
+            {latitude: 12.9254, longitude: 77.5973, risk_level: 2, location: "Bangalore - BTM Layout", description: "Crowded area with some incidents", timestamp: new Date().toISOString(), address: "BTM Layout, Bengaluru", user_submitted: false},
+            {latitude: 13.0298, longitude: 77.5441, risk_level: 2, location: "Bangalore - Yeshwanthpur", description: "Industrial area, isolated at night", timestamp: new Date().toISOString(), address: "Yeshwanthpur, Bengaluru", user_submitted: false},
+            
+            // Higher risk areas
+            {latitude: 12.9777, longitude: 77.5701, risk_level: 3, location: "Bangalore - Majestic", description: "Transportation hub with high crime rate", timestamp: new Date().toISOString(), address: "Majestic, Bengaluru", user_submitted: false},
+            {latitude: 12.9827, longitude: 77.6074, risk_level: 3, location: "Bangalore - Shivajinagar", description: "Crowded market area with harassment incidents", timestamp: new Date().toISOString(), address: "Shivajinagar, Bengaluru", user_submitted: false},
+            {latitude: 12.9538, longitude: 77.6121, risk_level: 3, location: "Bangalore - Tilak Nagar", description: "Multiple incidents reported", timestamp: new Date().toISOString(), address: "Tilak Nagar, Bengaluru", user_submitted: false},
+            {latitude: 13.0139, longitude: 77.5777, risk_level: 3, location: "Bangalore - KR Puram", description: "Poor lighting in several areas", timestamp: new Date().toISOString(), address: "KR Puram, Bengaluru", user_submitted: false},
+            
+            // South Bengaluru
+            {latitude: 12.9299, longitude: 77.5222, risk_level: 1, location: "Bangalore - Kengeri", description: "Residential area, generally safe", timestamp: new Date().toISOString(), address: "Kengeri, Bengaluru", user_submitted: false},
+            {latitude: 12.9141, longitude: 77.5853, risk_level: 1, location: "Bangalore - Jayanagar", description: "Well-planned residential area", timestamp: new Date().toISOString(), address: "Jayanagar, Bengaluru", user_submitted: false},
+            {latitude: 12.9150, longitude: 77.6045, risk_level: 1, location: "Bangalore - Banashankari", description: "Residential area with good infrastructure", timestamp: new Date().toISOString(), address: "Banashankari, Bengaluru", user_submitted: false},
+            
+            // North Bengaluru
+            {latitude: 13.0641, longitude: 77.5876, risk_level: 2, location: "Bangalore - Hebbal", description: "Developing area with some isolated spots", timestamp: new Date().toISOString(), address: "Hebbal, Bengaluru", user_submitted: false},
+            {latitude: 13.0985, longitude: 77.5947, risk_level: 1, location: "Bangalore - Yelahanka", description: "Planned residential layout, generally safe", timestamp: new Date().toISOString(), address: "Yelahanka, Bengaluru", user_submitted: false},
+            {latitude: 13.0589, longitude: 77.6454, risk_level: 2, location: "Bangalore - Hennur", description: "Developing area with some incidents reported", timestamp: new Date().toISOString(), address: "Hennur, Bengaluru", user_submitted: false},
+            
+            // East Bengaluru
+            {latitude: 12.9542, longitude: 77.6580, risk_level: 2, location: "Bangalore - HSR Layout", description: "Tech hub, generally safe but some incidents at night", timestamp: new Date().toISOString(), address: "HSR Layout, Bengaluru", user_submitted: false},
+            {latitude: 12.9768, longitude: 77.7406, risk_level: 2, location: "Bangalore - Marathahalli", description: "Crowded area with some incidents reported", timestamp: new Date().toISOString(), address: "Marathahalli, Bengaluru", user_submitted: false},
+            {latitude: 12.9344, longitude: 77.6992, risk_level: 2, location: "Bangalore - Bellandur", description: "Isolated spots near lake area", timestamp: new Date().toISOString(), address: "Bellandur, Bengaluru", user_submitted: false},
+            
+            // Central Bengaluru
+            {latitude: 12.9698, longitude: 77.5996, risk_level: 2, location: "Bangalore - Cubbon Park Area", description: "Safe during day, isolated at night", timestamp: new Date().toISOString(), address: "Cubbon Park, Bengaluru", user_submitted: false},
+            {latitude: 12.9619, longitude: 77.5990, risk_level: 2, location: "Bangalore - Richmond Road", description: "Commercial area, some incidents reported", timestamp: new Date().toISOString(), address: "Richmond Road, Bengaluru", user_submitted: false},
+            {latitude: 12.9766, longitude: 77.5993, risk_level: 2, location: "Bangalore - Commercial Street", description: "Crowded shopping area, pickpocketing reported", timestamp: new Date().toISOString(), address: "Commercial Street, Bengaluru", user_submitted: false},
+            
+            // Specific high-risk hotspots
+            {latitude: 12.9748, longitude: 77.5734, risk_level: 3, location: "Bangalore - Kalasipalya", description: "Transportation hub, high crime rate area", timestamp: new Date().toISOString(), address: "Kalasipalya, Bengaluru", user_submitted: false},
+            {latitude: 13.0068, longitude: 77.6093, risk_level: 3, location: "Bangalore - DJ Halli", description: "Multiple incidents reported, avoid at night", timestamp: new Date().toISOString(), address: "DJ Halli, Bengaluru", user_submitted: false},
+            {latitude: 12.9924, longitude: 77.5723, risk_level: 3, location: "Bangalore - Okalipuram", description: "Poorly lit areas, multiple incidents", timestamp: new Date().toISOString(), address: "Okalipuram, Bengaluru", user_submitted: false},
+            
+            // Areas with specific women safety concerns
+            {latitude: 12.9716, longitude: 77.6273, risk_level: 3, location: "Bangalore - Ejipura", description: "Women harassment incidents reported", timestamp: new Date().toISOString(), address: "Ejipura, Bengaluru", user_submitted: false},
+            {latitude: 12.9723, longitude: 77.5512, risk_level: 3, location: "Bangalore - KR Market", description: "Crowded market with narrow streets, unsafe for women", timestamp: new Date().toISOString(), address: "KR Market, Bengaluru", user_submitted: false},
+            {latitude: 12.9307, longitude: 77.5472, risk_level: 3, location: "Bangalore - Kumaraswamy Layout", description: "Multiple incidents against women reported", timestamp: new Date().toISOString(), address: "Kumaraswamy Layout, Bengaluru", user_submitted: false},
+            
+            // Recent specific incidents
+            {latitude: 12.9850, longitude: 77.6242, risk_level: 3, location: "Bangalore - Cox Town (Doddigunta)", description: "Recent harassment incidents reported", timestamp: new Date().toISOString(), address: "Cox Town, Bengaluru", user_submitted: false},
+            {latitude: 12.9810, longitude: 77.6048, risk_level: 3, location: "Bangalore - RBANMS College area", description: "Recent assault on woman reported", timestamp: new Date().toISOString(), address: "RBANMS College, Ulsoor, Bengaluru", user_submitted: false},
+            {latitude: 12.9860, longitude: 77.5817, risk_level: 3, location: "Bangalore - High Grounds", description: "Recent incident against woman in western attire", timestamp: new Date().toISOString(), address: "High Grounds, Bengaluru", user_submitted: false},
+            
+            // Tech corridors - generally safer
+            {latitude: 12.9153, longitude: 77.6841, risk_level: 1, location: "Bangalore - Outer Ring Road", description: "Corporate area, well-lit and monitored", timestamp: new Date().toISOString(), address: "Outer Ring Road, Bengaluru", user_submitted: false},
+            {latitude: 12.9592, longitude: 77.6974, risk_level: 1, location: "Bangalore - ITPL", description: "Tech park area, generally safe", timestamp: new Date().toISOString(), address: "ITPL, Whitefield, Bengaluru", user_submitted: false},
+            
+            // Popular recreational areas - variable safety
+            {latitude: 12.9716, longitude: 77.5946, risk_level: 2, location: "Bangalore - Brigade Road", description: "Safe during day, be cautious at night", timestamp: new Date().toISOString(), address: "Brigade Road, Bengaluru", user_submitted: false},
+            {latitude: 12.9685, longitude: 77.6162, risk_level: 2, location: "Bangalore - 100ft Road", description: "Popular nightlife area, generally safe but be cautious", timestamp: new Date().toISOString(), address: "100ft Road, Indiranagar, Bengaluru", user_submitted: false},
+            
+            // Random incidents across the city
+            {latitude: 12.9572, longitude: 77.6842, risk_level: 2, location: "Bangalore - Doddanekundi", description: "Isolated spots with poor lighting", timestamp: new Date().toISOString(), address: "Doddanekundi, Bengaluru", user_submitted: false},
+            {latitude: 12.9359, longitude: 77.6101, risk_level: 2, location: "Bangalore - Koramangala 4th Block", description: "Some incidents reported near pubs at night", timestamp: new Date().toISOString(), address: "Koramangala 4th Block, Bengaluru", user_submitted: false},
+            {latitude: 12.9982, longitude: 77.6094, risk_level: 2, location: "Bangalore - Banaswadi", description: "Some poorly lit areas", timestamp: new Date().toISOString(), address: "Banaswadi, Bengaluru", user_submitted: false},
+            {latitude: 12.9931, longitude: 77.5697, risk_level: 3, location: "Bangalore - Srirampura", description: "Multiple incidents reported, especially at night", timestamp: new Date().toISOString(), address: "Srirampura, Bengaluru", user_submitted: false}
         ];
 
         // Initialize variables
@@ -798,14 +830,63 @@
         let lastUpdateTime = Date.now();
         let viewportBounds = null;
         
+        // Local storage key for crime data
+        const CRIME_DATA_STORAGE_KEY = 'safetymap_crime_data';
+        
+        // Load crime data from local storage if available
+        function loadStoredCrimeData() {
+            const storedData = localStorage.getItem(CRIME_DATA_STORAGE_KEY);
+            if (storedData) {
+                try {
+                    const parsedData = JSON.parse(storedData);
+                    // Merge with existing data, avoiding duplicates
+                    if (Array.isArray(parsedData) && parsedData.length > 0) {
+                        // Keep track of existing locations to avoid duplicates
+                        const existingLocations = new Set(
+                            crimeData.map(item => `${item.latitude}_${item.longitude}_${item.location}`)
+                        );
+                        
+                        parsedData.forEach(item => {
+                            const locationKey = `${item.latitude}_${item.longitude}_${item.location}`;
+                            if (!existingLocations.has(locationKey)) {
+                                crimeData.push(item);
+                                existingLocations.add(locationKey);
+                            }
+                        });
+                        
+                        console.log(`Loaded ${parsedData.length} reports from local storage`);
+                    }
+                } catch (e) {
+                    console.error('Error parsing stored crime data:', e);
+                }
+            }
+        }
+        
+        // Save crime data to local storage
+        function saveCrimeData() {
+            try {
+                localStorage.setItem(CRIME_DATA_STORAGE_KEY, JSON.stringify(crimeData));
+                console.log(`Saved ${crimeData.length} reports to local storage`);
+            } catch (e) {
+                console.error('Error saving crime data to local storage:', e);
+            }
+        }
+        
         function initMap() {
             console.log("Initializing map with", crimeData.length, "data points...");
+            
+            // Load any saved data first
+            loadStoredCrimeData();
+            
             directionsService = new google.maps.DirectionsService();
             directionsRenderer = new google.maps.DirectionsRenderer();
 
             map = new google.maps.Map(document.getElementById("googleMap"), {
-                center: { lat: 15.3297, lng: 74.7566 },
-                zoom: 14
+                center: { lat: 12.872961, lng: 77.575597 },
+                zoom: 14,
+                mapTypeControl: true,
+                streetViewControl: true,
+                fullscreenControl: true
             });
 
             // Track viewport changes
@@ -818,17 +899,101 @@
             directionsRenderer.setMap(map);
 
             // Initialize Google Places Autocomplete
-            new google.maps.places.Autocomplete(document.getElementById("startLocation"));
-            new google.maps.places.Autocomplete(document.getElementById("endLocation"));
+            initStartDestinationAutocomplete();
 
             // Initialize heatmap layer
             createHeatmap();
             
             // Add markers
             createMarkers();
-
-            // Initialize autocomplete for report location
-            initReportLocationAutocomplete();
+            
+            // Update statistics
+            updateStatistics();
+            
+            // Initialize the report location autocomplete after map has loaded
+            setTimeout(() => {
+                initReportLocationAutocomplete();
+            }, 1000);
+            
+            // Set up click listener for map to allow clicking to set location
+            map.addListener('click', function(event) {
+                if (document.getElementById('reportModal').classList.contains('show')) {
+                    const lat = event.latLng.lat();
+                    const lng = event.latLng.lng();
+                    
+                    // Get address from clicked coordinates
+                    const geocoder = new google.maps.Geocoder();
+                    geocoder.geocode({ location: { lat, lng } }, (results, status) => {
+                        if (status === 'OK' && results[0]) {
+                            const address = results[0].formatted_address;
+                            document.getElementById('reportLocation').value = address;
+                            
+                            // Show marker for selected location
+                            if (window.tempLocationMarker) {
+                                window.tempLocationMarker.setMap(null);
+                            }
+                            window.tempLocationMarker = new google.maps.Marker({
+                                position: {lat, lng},
+                                map: map,
+                                title: 'Selected Location',
+                                icon: {
+                                    path: google.maps.SymbolPath.CIRCLE,
+                                    fillColor: '#FF6B6B',
+                                    fillOpacity: 1,
+                                    strokeColor: '#ffffff',
+                                    strokeWeight: 2,
+                                    scale: 12
+                                },
+                                animation: google.maps.Animation.DROP
+                            });
+                        }
+                    });
+                }
+            });
+        }
+        
+        // Initialize autocomplete for route planning inputs
+        function initStartDestinationAutocomplete() {
+            const startLocationInput = document.getElementById("startLocation");
+            const endLocationInput = document.getElementById("endLocation");
+            
+            if (!startLocationInput || !endLocationInput) {
+                console.error("Route planning inputs not found");
+                return;
+            }
+            
+            try {
+                const startAutocomplete = new google.maps.places.Autocomplete(startLocationInput, {
+                    types: ['geocode', 'establishment'],
+                    fields: ['place_id', 'geometry', 'formatted_address', 'name']
+                });
+                
+                const endAutocomplete = new google.maps.places.Autocomplete(endLocationInput, {
+                    types: ['geocode', 'establishment'],
+                    fields: ['place_id', 'geometry', 'formatted_address', 'name']
+                });
+                
+                // When a place is selected, update the map view
+                startAutocomplete.addListener('place_changed', function() {
+                    const place = startAutocomplete.getPlace();
+                    if (place && place.geometry) {
+                        map.setCenter(place.geometry.location);
+                        map.setZoom(15);
+                    }
+                });
+                
+                endAutocomplete.addListener('place_changed', function() {
+                    const place = endAutocomplete.getPlace();
+                    if (place && place.geometry) {
+                        map.panTo(place.geometry.location);
+                        map.setZoom(15);
+                    }
+                });
+                
+                console.log("Start/destination autocomplete initialized successfully");
+            } catch (error) {
+                console.error("Error initializing route autocomplete:", error);
+            }
         }
 
         // Function to get color based on risk level
@@ -973,7 +1138,7 @@
             
             switch(location) {
                 case 'Bangalore':
-                    center = {lat: 12.9716, lng: 77.5946};
+                    center = {lat: 12.872961, lng: 77.575597};
                     zoom = 12;
                     break;
                 case 'Delhi':
@@ -1001,8 +1166,8 @@
                     zoom = 13;
                     break;
                 default:
-                    center = {lat: 22.0, lng: 82.0};
-                    zoom = 5;
+                    center = {lat: 12.872961, lng: 77.575597};
+                    zoom = 12;
             }
             
             map.setCenter(center);
@@ -1229,10 +1394,19 @@
             }
         });
 
+        // Refresh button functionality
+        document.getElementById('refreshData').addEventListener('click', function() {
+            loadCrimeData();
+        });
+
         // Function to load data
         function loadCrimeData() {
+            // Update last update time
             lastUpdateTime = Date.now();
             updateTimestamp();
+            
+            // Reload from local storage (in case another tab updated the data)
+            loadStoredCrimeData();
             
             // Update map and statistics
             createMarkers();
@@ -1254,49 +1428,189 @@
             reportModal.show();
         });
 
-        // Initialize Google Places Autocomplete for report location
-        let reportLocationAutocomplete;
-        function initReportLocationAutocomplete() {
-            const input = document.getElementById('reportLocation');
-            reportLocationAutocomplete = new google.maps.places.Autocomplete(input, {
-                types: ['geocode', 'establishment'],
-                componentRestrictions: { country: 'in' }
-            });
+        // Handle form submission
+        reportForm.addEventListener('submit', function(event) {
+            event.preventDefault();
 
-            // Add listener for place selection
-            reportLocationAutocomplete.addListener('place_changed', function() {
-                const place = reportLocationAutocomplete.getPlace();
-                if (!place.geometry) {
-                    alert("No details available for input: '" + place.name + "'");
-                    return;
+            // Get form data
+            const type = document.getElementById('reportType').value;
+            const riskLevel = parseInt(document.getElementById('reportRiskLevel').value);
+            const location = document.getElementById('reportLocation').value;
+            const description = document.getElementById('reportDescription').value;
+
+            // Extract coordinates if using current location
+            let lat, lng;
+            if (location.includes('Current Location')) {
+                const coords = location.match(/Lat: ([\d.-]+), Lng: ([\d.-]+)/);
+                if (coords) {
+                    lat = parseFloat(coords[1]);
+                    lng = parseFloat(coords[2]);
+                    addNewReport(lat, lng, type, riskLevel, description);
+                } else {
+                    alert('Could not extract coordinates from current location');
+                }
+            } else {
+                // If not current location, use the selected place from autocomplete
+                try {
+                    const place = reportLocationAutocomplete.getPlace();
+                    if (place && place.geometry) {
+                        lat = place.geometry.location.lat();
+                        lng = place.geometry.location.lng();
+                        addNewReport(lat, lng, type, riskLevel, description);
+                    } else {
+                        // Fallback to geocoding if place doesn't have geometry
+                        geocodeLocation(location, type, riskLevel, description);
+                    }
+                } catch (error) {
+                    // Fallback to geocoding if autocomplete fails
+                    geocodeLocation(location, type, riskLevel, description);
+                }
+            }
+        });
+
+        // Geocode location using Google Geocoder
+        function geocodeLocation(address, type, riskLevel, description) {
+            const geocoder = new google.maps.Geocoder();
+            geocoder.geocode({ address: address }, (results, status) => {
+                if (status === 'OK' && results && results.length > 0) {
+                    const lat = results[0].geometry.location.lat();
+                    const lng = results[0].geometry.location.lng();
+                    addNewReport(lat, lng, type, riskLevel, description);
+                } else {
+                    alert('Could not find location. Please try a different address or use current location.');
                 }
             });
         }
 
-        // Get current location for report form
-        document.getElementById('getLocationButton').addEventListener('click', function() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    function(position) {
-                        const lat = position.coords.latitude;
-                        const lng = position.coords.longitude;
-                        
-                        // Update the location input with formatted coordinates
-                        const locationInput = document.getElementById('reportLocation');
-                        locationInput.value = `Current Location (Lat: ${lat}, Lng: ${lng})`;
-                        
-                        // Add a marker for current location on the map
-                        if (window.currentLocationMarker) {
-                            window.currentLocationMarker.setMap(null);
+        // Function to add new report to crime data
+        function addNewReport(lat, lng, type, riskLevel, description) {
+            // Create a more descriptive location name if clicked on map
+            let locationName = type;
+            
+            // Use reverse geocoding to get a more meaningful location name
+            const geocoder = new google.maps.Geocoder();
+            geocoder.geocode({ location: { lat, lng } }, (results, status) => {
+                if (status === "OK" && results[0]) {
+                    // Extract neighborhood or area name from address components
+                    let areaName = "";
+                    for (const component of results[0].address_components) {
+                        if (component.types.includes("sublocality_level_1") || 
+                            component.types.includes("locality") ||
+                            component.types.includes("neighborhood")) {
+                            areaName = component.long_name;
+                            break;
+                        }
+                    }
+                    
+                    // If we found an area name, use it in the location
+                    if (areaName) {
+                        locationName = `${type} - ${areaName}`;
+                    }
+                    
+                    // Create new report object with enhanced location info
+                    finishAddingReport(lat, lng, locationName, riskLevel, description, results[0].formatted_address);
+                } else {
+                    // If geocoding fails, just use the type as location
+                    finishAddingReport(lat, lng, locationName, riskLevel, description);
+                }
+            });
+        }
+        
+        // Helper function to complete the report addition process
+        function finishAddingReport(lat, lng, locationName, riskLevel, description, address = null) {
+            // Create new report object
+            const newReport = {
+                latitude: lat,
+                longitude: lng,
+                risk_level: riskLevel,
+                location: locationName,
+                description: description,
+                address: address,
+                timestamp: new Date().toISOString(),
+                user_submitted: true
+            };
+
+            // Add to crimeData array
+            crimeData.push(newReport);
+            
+            // Save to local storage
+            saveCrimeData();
+
+            // Update the map
+            createMarkers();
+            createHeatmap();
+            updateStatistics();
+
+            // Close the modal
+            const reportModal = bootstrap.Modal.getInstance(document.getElementById('reportModal'));
+            reportModal.hide();
+
+            // Reset the form
+            document.getElementById('reportForm').reset();
+            
+            // Remove temporary marker if it exists
+            if (window.tempLocationMarker) {
+                window.tempLocationMarker.setMap(null);
+                window.tempLocationMarker = null;
+            }
+
+            // Show success message
+            const successAlert = document.createElement('div');
+            successAlert.className = 'alert alert-success alert-dismissible fade show';
+            successAlert.innerHTML = `
+                <strong>Report submitted successfully!</strong> Your report has been added to the map.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            document.querySelector('.glass-card').insertBefore(successAlert, document.querySelector('.mb-3'));
+        }
+
+        // Initialize Google Places Autocomplete for report location
+        let reportLocationAutocomplete;
+        function initReportLocationAutocomplete() {
+            const input = document.getElementById('reportLocation');
+            if (!input) {
+                console.error("Report location input not found");
+                return;
+            }
+            
+            try {
+                // Ensure Google Maps is fully loaded
+                if (google && google.maps && google.maps.places) {
+                    reportLocationAutocomplete = new google.maps.places.Autocomplete(input, {
+                        types: ['geocode', 'establishment'],
+                        fields: ['place_id', 'geometry', 'formatted_address', 'name']
+                    });
+                    
+                    // Keep the dropdown visible when user focuses on the input
+                    input.addEventListener('focus', function() {
+                        if (this.value.length) {
+                            google.maps.event.trigger(reportLocationAutocomplete, 'place_changed');
+                        }
+                    });
+
+                    // Add listener for place selection
+                    reportLocationAutocomplete.addListener('place_changed', function() {
+                        const place = reportLocationAutocomplete.getPlace();
+                        if (!place.geometry) {
+                            console.warn("No details available for input: '" + place.name + "'");
+                            return;
                         }
                         
-                        window.currentLocationMarker = new google.maps.Marker({
-                            position: {lat: lat, lng: lng},
+                        // Center map on selected place
+                        map.setCenter(place.geometry.location);
+                        map.setZoom(15);
+                        
+                        // Show marker for selected location
+                        if (window.tempLocationMarker) {
+                            window.tempLocationMarker.setMap(null);
+                        }
+                        window.tempLocationMarker = new google.maps.Marker({
+                            position: place.geometry.location,
                             map: map,
-                            title: 'Your Current Location',
+                            title: place.name || 'Selected Location',
                             icon: {
                                 path: google.maps.SymbolPath.CIRCLE,
-                                fillColor: '#4285F4',
+                                fillColor: '#FF6B6B',
                                 fillOpacity: 1,
                                 strokeColor: '#ffffff',
                                 strokeWeight: 2,
@@ -1304,21 +1618,72 @@
                             },
                             animation: google.maps.Animation.DROP
                         });
+                    });
+                    
+                    console.log("Report location autocomplete initialized successfully");
+                } else {
+                    console.error("Google Maps Places API not available");
+                }
+            } catch (error) {
+                console.error("Error initializing report location autocomplete:", error);
+            }
+        }
+
+        // Get current location for report form
+        document.getElementById('getLocationButton').addEventListener('click', function() {
+            if (navigator.geolocation) {
+                // Show loading indicator
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Getting location...';
+                this.disabled = true;
+                
+                navigator.geolocation.getCurrentPosition(
+                    // Success callback
+                    position => {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
                         
-                        // Center map on current location
-                        map.setCenter({lat: lat, lng: lng});
-                        map.setZoom(15);
-                        
-                        // Show success message
-                        const successAlert = document.createElement('div');
-                        successAlert.className = 'alert alert-success alert-dismissible fade show';
-                        successAlert.innerHTML = `
-                            <strong>Location found!</strong> Your current location has been set.
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        `;
-                        document.querySelector('.modal-body').insertBefore(successAlert, document.querySelector('#reportForm'));
+                        // Get address from coordinates
+                        const geocoder = new google.maps.Geocoder();
+                        geocoder.geocode({ location: { lat, lng } }, (results, status) => {
+                            if (status === 'OK' && results[0]) {
+                                const address = results[0].formatted_address;
+                                const locationInput = document.getElementById('reportLocation');
+                                locationInput.value = `${address} (Lat: ${lat}, Lng: ${lng})`;
+                            } else {
+                                const locationInput = document.getElementById('reportLocation');
+                                locationInput.value = `Current Location (Lat: ${lat}, Lng: ${lng})`;
+                            }
+                            
+                            // Show the location on the map for verification
+                            map.setCenter({lat: lat, lng: lng});
+                            map.setZoom(15);
+                            
+                            // Restore button
+                            this.innerHTML = '<i class="fas fa-location-arrow"></i> Use Current Location';
+                            this.disabled = false;
+                            
+                            // Place a temporary marker
+                            if (window.tempLocationMarker) {
+                                window.tempLocationMarker.setMap(null);
+                            }
+                            window.tempLocationMarker = new google.maps.Marker({
+                                position: {lat: lat, lng: lng},
+                                map: map,
+                                title: 'Report Location',
+                                icon: {
+                                    path: google.maps.SymbolPath.CIRCLE,
+                                    fillColor: '#FF6B6B',
+                                    fillOpacity: 1,
+                                    strokeColor: '#ffffff',
+                                    strokeWeight: 2,
+                                    scale: 12
+                                },
+                                animation: google.maps.Animation.DROP
+                            });
+                        });
                     },
-                    function(error) {
+                    // Error callback
+                    error => {
                         console.error('Error getting location:', error);
                         let errorMessage = 'Unable to retrieve your location. ';
                         
@@ -1336,15 +1701,14 @@
                                 errorMessage += 'Please enter your location manually.';
                         }
                         
-                        // Show error message
-                        const errorAlert = document.createElement('div');
-                        errorAlert.className = 'alert alert-danger alert-dismissible fade show';
-                        errorAlert.innerHTML = `
-                            <strong>Error!</strong> ${errorMessage}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        `;
-                        document.querySelector('.modal-body').insertBefore(errorAlert, document.querySelector('#reportForm'));
+                        // Restore button
+                        this.innerHTML = '<i class="fas fa-location-arrow"></i> Use Current Location';
+                        this.disabled = false;
+                        
+                        // Show error
+                        alert(errorMessage);
                     },
+                    // Options
                     {
                         enableHighAccuracy: true,
                         timeout: 10000,
@@ -1355,95 +1719,6 @@
                 alert('Geolocation is not supported by your browser. Please enter your location manually.');
             }
         });
-
-        // Handle form submission
-        reportForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            // Get form data
-            const type = document.getElementById('reportType').value;
-            const riskLevel = parseInt(document.getElementById('reportRiskLevel').value);
-            const location = document.getElementById('reportLocation').value;
-            const description = document.getElementById('reportDescription').value;
-
-            // Validate form data
-            if (!type || !riskLevel || !location || !description) {
-                alert('Please fill in all required fields');
-                return;
-            }
-
-            // Extract coordinates if using current location
-            let lat, lng;
-            if (location.includes('Current Location')) {
-                const coords = location.match(/Lat: ([\d.-]+), Lng: ([\d.-]+)/);
-                if (coords) {
-                    lat = parseFloat(coords[1]);
-                    lng = parseFloat(coords[2]);
-                    addNewReport(lat, lng, type, riskLevel, description);
-                } else {
-                    alert('Invalid current location format');
-                    return;
-                }
-            } else {
-                // If not current location, use the selected place from autocomplete
-                const place = reportLocationAutocomplete.getPlace();
-                if (place && place.geometry) {
-                    lat = place.geometry.location.lat();
-                    lng = place.geometry.location.lng();
-                    addNewReport(lat, lng, type, riskLevel, description);
-                } else {
-                    // If no place selected, try geocoding the input
-                    const geocoder = new google.maps.Geocoder();
-                    geocoder.geocode({ address: location }, (results, status) => {
-                        if (status === 'OK' && results[0]) {
-                            lat = results[0].geometry.location.lat();
-                            lng = results[0].geometry.location.lng();
-                            addNewReport(lat, lng, type, riskLevel, description);
-                        } else {
-                            alert('Could not find the location. Please select a valid location from the suggestions or use current location.');
-                        }
-                    });
-                    return;
-                }
-            }
-        });
-
-        // Function to add new report to crime data
-        function addNewReport(lat, lng, type, riskLevel, description) {
-            // Create new report object
-            const newReport = {
-                latitude: lat,
-                longitude: lng,
-                risk_level: riskLevel,
-                location: type,
-                description: description,
-                timestamp: new Date().toISOString()
-            };
-
-            // Add to crimeData array
-            crimeData.push(newReport);
-
-            // Update the map
-            createMarkers();
-            createHeatmap();
-            updateStatistics();
-
-            // Close the modal
-            const reportModal = bootstrap.Modal.getInstance(document.getElementById('reportModal'));
-            reportModal.hide();
-
-            // Reset the form
-            document.getElementById('reportForm').reset();
-
-            // Show success message
-            const successAlert = document.createElement('div');
-            successAlert.className = 'alert alert-success alert-dismissible fade show';
-            successAlert.innerHTML = `
-                <strong>Report submitted successfully!</strong> Your report has been added to the map.
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            `;
-            document.querySelector('.glass-card').insertBefore(successAlert, document.querySelector('.mb-3'));
-        }
     </script>
 </body>
 </html> 
