@@ -58,6 +58,23 @@ st.markdown("""
         font-size: 1.1em;
         line-height: 1.5;
         font-weight: 500;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        hyphens: auto;
+    }
+    .stMarkdown p {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        max-width: 100%;
+    }
+    .chat-message p {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        max-width: 100%;
+    }
+    .emergency-box p, .safety-tip p {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
     }
     </style>
 """, unsafe_allow_html=True)
