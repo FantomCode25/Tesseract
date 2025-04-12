@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeHer - Community</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #FF9A8B;
+            --secondary-color: #FF6B6B;
+            --accent-color: #FFA07A;
+            --peach-light: #FFDAB9;
+            --peach-dark: #E9967A;
+            --text-dark: #2D3436;
+            --text-light: #ffffff;
+            --gradient-1: linear-gradient(135deg, #FF9A8B 0%, #FF6B6B 100%);
+            --gradient-2: linear-gradient(45deg, #FFA07A 0%, #FF9A8B 100%);
+            --glass-bg: rgba(255, 255, 255, 0.95);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --card-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            --gradient-start: #FF9A8B;
+            --gradient-middle: #FF6B6B;
+            --gradient-end: #FFA07A;
+            --sidebar-width: 280px;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f8fafc;
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding-left: var(--sidebar-width);
+            position: relative;
+        }
+
+        .gradient-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(-45deg, 
+                rgba(255, 154, 139, 0.1), 
+                rgba(255, 107, 107, 0.1), 
+                rgba(255, 160, 122, 0.1));
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            border-right: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .main-content {
+            min-height: 100vh;
+            transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            padding-bottom: 2rem;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            background: var(--gradient-1);
+            border-radius: 16px;
+            color: white;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 1rem;
+            object-fit: cover;
+            border: 3px solid white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .user-info h6 {
+            margin: 0;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: white;
+            max-width: 180px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-info small {
+            color: rgba(255,255,255,0.9);
+            font-weight: 500;
+            max-width: 180px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: block;
+        }
+
+        .nav-link {
+            padding: 1rem 1.25rem;
+            border-radius: 12px;
+            color: var(--text-dark);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--gradient-1);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .nav-link i {
+            width: 24px;
+            font-size: 1.2rem;
+        }
+
+        .mobile-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+            background: var(--gradient-1);
+            border: none;
+            color: white;
+            padding: 0.75rem;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .community-header {
+            background: var(--gradient-1);
+            padding: 3rem 0;
+            margin-bottom: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .community-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><circle cx="2" cy="2" r="2" fill="rgba(255,255,255,0.1)"/></svg>');
+            opacity: 0.3;
+            animation: patternMove 20s linear infinite;
+        }
+
+        .post-card {
+            background: var(--glass-bg);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--glass-border);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .post-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        .alert-card {
+            background: linear-gradient(135deg, rgba(255, 154, 139, 0.1) 0%, rgba(255, 107, 107, 0.1) 100%);
+            border-left: 4px solid var(--secondary-color);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .alert-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .emergency-card {
+            background: var(--glass-bg);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--glass-border);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .emergency-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-post {
+            background: var(--gradient-1);
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 1rem;
+            color: white;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-post:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
+        }
+
+        .form-control {
+            border-radius: 1rem;
+            border: 2px solid rgba(255, 154, 139, 0.1);
+            padding: 1.2rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-control:focus {
+            box-shadow: 0 0 0 4px rgba(255, 154, 139, 0.1);
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .section-title {
+            color: var(--secondary-color);
+            font-weight: 600;
+            margin-bottom: 2rem;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 0.5rem;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60%;
+            height: 4px;
+            background: var(--gradient-1);
+            border-radius: 2px;
+        }
+
+        .btn-action {
+            padding: 0.5rem 1rem;
+            border-radius: 0.75rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 154, 139, 0.1);
+            color: var(--secondary-color);
+            border: none;
+            font-weight: 500;
+        }
+
+        .btn-action:hover {
+            background: var(--gradient-1);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding-left: 0;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+                box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .mobile-toggle {
+                display: block;
+            }
+
+            .main-content {
+                padding-top: 4rem;
+            }
+
+            .community-header {
+                padding: 2rem 0;
+            }
+
+            .post-card, .emergency-card {
+                padding: 1.5rem;
+            }
+
+            .container {
+                padding-left: 1.5rem;
+                padding-right: 1.5rem;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 154, 139, 0.1);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--gradient-1);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gradient-2);
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Elements -->
+    <div class="gradient-background"></div>
+    <div class="gradient-overlay"></div>
+
+    <!-- Mobile Toggle Button -->
+    <button class="mobile-toggle" id="sidebarToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar Navigation -->
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="user-profile">
+                <img src="https://ui-avatars.com/api/?name=User&background=FF9A8B&color=fff" 
+                    alt="User Avatar" class="user-avatar">
+                <div class="user-info">
+                    <h6>Loading...</h6>
+                    <small class="user-email">Loading...</small>
+                </div>
+            </div>
+            <ul class="sidebar-nav" style="list-style: none; padding: 0;">
+                <li class="nav-item">
+                    <a href="dashboard.html" class="nav-link">
+                        <i class="fas fa-home"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="live-tracker.html" class="nav-link">
+                        <i class="fas fa-location-arrow"></i>
+                        Live Tracker
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="safety-map.html" class="nav-link">
+                        <i class="fas fa-map-marked-alt"></i>
+                        Safety Map
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="community.html" class="nav-link active">
+                        <i class="fas fa-users"></i>
+                        Community
+                    </a>
+                </li>
+                <li class="nav-item mt-auto">
+                    <a href="auth.html?action=logout" class="nav-link" id="logoutLink">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Community Header -->
+            <header class="community-header text-white">
+                <div class="container">
+                    <h1 class="display-5 fw-bold mb-3">Women Safety & Security Community</h1>
+                    <p class="lead mb-0">Connect, Share, and Support Each Other</p>
+                </div>
+            </header>
+
+            <div class="container">
+                <div class="row">
+                    <!-- Discussion Board Section -->
+                    <div class="col-lg-8 mb-4">
+                        <h2 class="section-title">Discussion Board</h2>
+                        
+                        <!-- Post Creation Form -->
+                        <div class="post-card mb-4">
+                            <form id="postForm">
+                                <div class="mb-3">
+                                    <textarea class="form-control" id="postContent" rows="4" 
+                                        placeholder="Share your thoughts, experiences, or safety tips..."></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-post">
+                                    <i class="fas fa-paper-plane me-2"></i>Post
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Posts Container -->
+                        <div id="postsContainer">
+                            <!-- Sample Post -->
+                            <div class="post-card">
+                                <div class="d-flex align-items-center mb-3">
+                                    <img src="https://ui-avatars.com/api/?name=Sarah+Johnson&background=FF9A8B&color=fff" 
+                                        alt="Profile" class="rounded-circle me-2" style="width: 40px; height: 40px;">
+                                    <div>
+                                        <h6 class="mb-0">Sarah Johnson</h6>
+                                        <small class="post-meta">Posted 2 hours ago</small>
+                                    </div>
+                                </div>
+                                <p>Just discovered a great self-defense class in downtown! They offer women-only sessions every Tuesday and Thursday evening. DM me if you'd like more details!</p>
+                                <div class="d-flex align-items-center">
+                                    <button class="btn btn-sm btn-light me-2">
+                                        <i class="far fa-heart me-1"></i>Like
+                                    </button>
+                                    <button class="btn btn-sm btn-light">
+                                        <i class="far fa-comment me-1"></i>Comment
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sidebar -->
+                    <div class="col-lg-4">
+                        <!-- Safety Alerts Section -->
+                        <div class="mb-4">
+                            <h2 class="section-title">Safety Alerts</h2>
+                            <div class="alert-card">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                                    <div>
+                                        <h6 class="mb-1">Recent Alert</h6>
+                                        <p class="mb-0">Avoid Central Park area after 9 PM due to reported incidents.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="alert-card">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-shield-alt text-success me-2"></i>
+                                    <div>
+                                        <h6 class="mb-1">Safe Zone Update</h6>
+                                        <p class="mb-0">New safe zone established at Downtown Mall with 24/7 security.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Emergency Resources Section -->
+                        <div>
+                            <h2 class="section-title">Emergency Resources</h2>
+                            <div class="emergency-card">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-phone-alt emergency-icon"></i>
+                                    <div>
+                                        <h5>Police Helpline</h5>
+                                        <p class="mb-0">911</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="emergency-card">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-hands-helping emergency-icon"></i>
+                                    <div>
+                                        <h5>Women Helpline</h5>
+                                        <p class="mb-0">1-800-799-SAFE</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="emergency-card">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-ambulance emergency-icon"></i>
+                                    <div>
+                                        <h5>Emergency Medical</h5>
+                                        <p class="mb-0">911</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="firebase-config.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check for user authentication
+            const userData = localStorage.getItem('safeher_user');
+            if (!userData) {
+                // If no user data, redirect to login
+                window.location.href = 'auth.html';
+                return;
+            }
+            
+            // Parse user data
+            const user = JSON.parse(userData);
+            
+            // Initialize GSAP
+            gsap.registerPlugin(ScrollTrigger);
+
+            // Sidebar functionality
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebar');
+            
+            function toggleSidebar() {
+                sidebar.classList.toggle('active');
+            }
+
+            sidebarToggle.addEventListener('click', toggleSidebar);
+
+            // Close sidebar when clicking outside
+            document.addEventListener('click', (e) => {
+                const isMobile = window.innerWidth <= 768;
+                if (isMobile && 
+                    !sidebar.contains(e.target) && 
+                    !sidebarToggle.contains(e.target) &&
+                    sidebar.classList.contains('active')) {
+                    toggleSidebar();
+                }
+            });
+
+            // Optimized scroll animations
+            const scrollElements = gsap.utils.toArray('.post-card, .emergency-card, .alert-card');
+            scrollElements.forEach((element, i) => {
+                gsap.from(element, {
+                    scrollTrigger: {
+                        trigger: element,
+                        start: "top bottom-=100",
+                        toggleActions: "play none none reverse"
+                    },
+                    y: 30,
+                    opacity: 0,
+                    duration: 0.6,
+                    delay: i * 0.1
+                });
+            });
+
+            // Initial animations
+            gsap.from('.community-header', {
+                y: -30,
+                opacity: 0,
+                duration: 0.8,
+                ease: 'power2.out'
+            });
+
+            gsap.from('.section-title', {
+                x: -20,
+                opacity: 0,
+                duration: 0.6,
+                stagger: 0.2,
+                ease: 'power2.out'
+            });
+
+            // Post creation functionality
+            const postForm = document.getElementById('postForm');
+            const postContent = document.getElementById('postContent');
+            const postsContainer = document.getElementById('postsContainer');
+
+            postForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const content = postContent.value.trim();
+                
+                if (!content) {
+                    showToast('Please enter some content for your post.');
+                    return;
+                }
+
+                createNewPost(content, user);
+                postContent.value = '';
+            });
+
+            function createNewPost(content, userData) {
+                const post = document.createElement('div');
+                post.className = 'post-card';
+                const timestamp = new Date().toLocaleTimeString();
+                
+                post.innerHTML = `
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="${userData.photoURL}" 
+                            alt="Profile" class="rounded-circle me-2" style="width: 40px; height: 40px;">
+                        <div>
+                            <h6 class="mb-0">${userData.displayName}</h6>
+                            <small class="text-muted">${timestamp}</small>
+                        </div>
+                    </div>
+                    <p>${content}</p>
+                    <div class="d-flex align-items-center">
+                        <button class="btn btn-action me-2">
+                            <i class="far fa-heart me-1"></i>Like
+                        </button>
+                        <button class="btn btn-action">
+                            <i class="far fa-comment me-1"></i>Comment
+                        </button>
+                    </div>
+                `;
+
+                // Insert new post at the top
+                postsContainer.insertBefore(post, postsContainer.firstChild);
+
+                // Animate new post
+                gsap.from(post, {
+                    y: -20,
+                    opacity: 0,
+                    duration: 0.4,
+                    ease: 'power2.out'
+                });
+
+                // Setup like button functionality
+                const likeBtn = post.querySelector('.btn-action');
+                likeBtn.addEventListener('click', function() {
+                    const icon = this.querySelector('i');
+                    if (icon.classList.contains('far')) {
+                        icon.classList.replace('far', 'fas');
+                        gsap.from(icon, {
+                            scale: 1.4,
+                            duration: 0.2,
+                            ease: 'back.out'
+                        });
+                    } else {
+                        icon.classList.replace('fas', 'far');
+                    }
+                });
+            }
+
+            function showToast(message) {
+                const toast = document.createElement('div');
+                toast.className = 'position-fixed bottom-0 end-0 p-3';
+                toast.style.zIndex = '1050';
+                toast.innerHTML = `
+                    <div class="toast show" role="alert">
+                        <div class="toast-body bg-danger text-white rounded">
+                            ${message}
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
+            }
+
+            // Handle like buttons for existing posts
+            document.querySelectorAll('.btn-action').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const icon = this.querySelector('i');
+                    if (icon.classList.contains('far')) {
+                        icon.classList.replace('far', 'fas');
+                        gsap.from(icon, {
+                            scale: 1.4,
+                            duration: 0.2,
+                            ease: 'back.out'
+                        });
+                    } else {
+                        icon.classList.replace('fas', 'far');
+                    }
+                });
+            });
+
+            // Listen for auth state changes
+            firebase.auth().onAuthStateChanged((firebaseUser) => {
+                if (!firebaseUser) {
+                    // User is not logged in, redirect to login page
+                    window.location.href = 'auth.html';
+                }
+            });
+            
+            // Logout Button Script
+            const logoutButton = document.getElementById('logoutButton');
+            if (logoutButton) {
+                logoutButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Show confirmation dialog
+                    if (confirm('Are you sure you want to log out?')) {
+                        firebase.auth().signOut().then(function() {
+                            console.log('User signed out successfully');
+                            // Set a flag in sessionStorage to indicate intentional logout
+                            sessionStorage.setItem('userLoggedOut', 'true');
+                            // Redirect to auth page with logout parameter
+                            window.location.href = 'auth.html?action=logout';
+                        }).catch(function(error) {
+                            console.error('Sign out error:', error);
+                            // Even if there's an error, try to redirect
+                            window.location.href = 'auth.html?action=logout';
+                        });
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html> 

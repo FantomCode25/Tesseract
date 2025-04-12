@@ -10,7 +10,15 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     <link rel="stylesheet" href="styles.css">
     <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="firebase-config.js"></script>
+    
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBzOkTzsKOkKwcaPJqxHF8eMqm5dc3LsMg&libraries=places,directions,visualization&callback=initMap" async defer></script>
+    
     <style>
         :root {
             --gradient-start: #FF9A8B;
@@ -354,11 +362,20 @@
             margin: 0;
             font-weight: 600;
             font-size: 1.1rem;
+            max-width: 180px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .user-info small {
             color: var(--gradient-middle);
             font-weight: 500;
+            max-width: 180px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: block;
         }
 
         .data-timestamp {
@@ -463,10 +480,10 @@
         <!-- Sidebar -->
         <div class="sidebar" id="sidebar">
             <div class="user-profile glass-card">
-                <img src="https://i.pravatar.cc/150?img=32" alt="User Avatar" class="user-avatar">
+                <img src="https://ui-avatars.com/api/?name=User&background=FF9A8B&color=fff" alt="User Avatar" class="user-avatar">
                 <div class="user-info">
-                    <h6>Sarah Johnson</h6> <!-- Replace with dynamic user name if needed -->
-                    <small>Community Member</small>
+                    <h6 class="user-name">Loading...</h6>
+                    <small class="user-email">Loading...</small>
                 </div>
             </div>
 
@@ -496,8 +513,14 @@
                         Community
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="chatbot.html" class="nav-link">
+                        <i class="fas fa-comment-dots"></i>
+                        Chatbot
+                    </a>
+                </li>
                 <li class="nav-item mt-auto">
-                    <a href="auth.html" class="nav-link">
+                    <a href="auth.html?action=logout" class="nav-link" id="logoutButton">
                         <i class="fas fa-sign-out-alt"></i>
                         Logout
                     </a>
@@ -737,6 +760,50 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script>
+        // Check authentication state when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user data is available in localStorage
+            const userData = localStorage.getItem('safeher_user');
+            if (!userData) {
+                // If no user data, redirect to login
+                window.location.href = 'auth.html';
+                return;
+            }
+            
+            // Parse and display user data
+            const user = JSON.parse(userData);
+            updateUserInterface(user);
+            
+            // Listen for auth state changes
+            firebase.auth().onAuthStateChanged((firebaseUser) => {
+                if (!firebaseUser) {
+                    // User is not logged in, redirect to login page
+                    window.location.href = 'auth.html';
+                }
+            });
+        });
+
+        // Function to update user interface with user data
+        function updateUserInterface(userData) {
+            // Update user avatar
+            const userAvatarElements = document.querySelectorAll('.user-avatar');
+            userAvatarElements.forEach(element => {
+                if (element) element.src = userData.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.displayName)}&background=FF9A8B&color=fff`;
+            });
+            
+            // Update user name
+            const userNameElements = document.querySelectorAll('.user-name, .user-info h6');
+            userNameElements.forEach(element => {
+                if (element) element.textContent = userData.displayName;
+            });
+            
+            // Update user email
+            const userEmailElements = document.querySelectorAll('.user-email, .user-info small');
+            userEmailElements.forEach(element => {
+                if (element) element.textContent = userData.email;
+            });
+        }
+        
         // Mobile Navigation Toggle
         document.getElementById('fixedSidebarToggle').addEventListener('click', function() {
             document.getElementById('sidebar').classList.toggle('active');
@@ -1717,6 +1784,34 @@
                 );
             } else {
                 alert('Geolocation is not supported by your browser. Please enter your location manually.');
+            }
+        });
+
+        // Logout Button Script
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoutButton = document.getElementById('logoutButton');
+            if (logoutButton) {
+                logoutButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Show confirmation dialog
+                    if (confirm('Are you sure you want to log out?')) {
+                        firebase.auth().signOut().then(function() {
+                            console.log('User signed out successfully');
+                            // Clear user data from localStorage
+                            localStorage.removeItem('safeher_user');
+                            // Set a flag in sessionStorage to indicate intentional logout
+                            sessionStorage.setItem('userLoggedOut', 'true');
+                            // Redirect to auth page with logout parameter
+                            window.location.href = 'auth.html?action=logout';
+                        }).catch(function(error) {
+                            console.error('Sign out error:', error);
+                            // Even if there's an error, try to redirect
+                            localStorage.removeItem('safeher_user');
+                            window.location.href = 'auth.html?action=logout';
+                        });
+                    }
+                });
             }
         });
     </script>

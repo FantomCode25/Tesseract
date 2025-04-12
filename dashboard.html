@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeHer - Dashboard</title>
+    
+    <!-- Load Firebase (KEEP ONLY THESE VERSIONS) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    
+    <!-- Debug script - add at top to capture any loading issues -->
+    <script>
+        console.log('Dashboard HTML starting to load at:', new Date().toISOString());
+        window.dashboardErrors = [];
+        window.addEventListener('error', function(event) {
+            console.error('Dashboard error captured:', event.error);
+            window.dashboardErrors.push({
+                message: event.message,
+                source: event.filename,
+                lineNo: event.lineno,
+                colNo: event.colno,
+                error: event.error ? event.error.toString() : 'Unknown error',
+                time: new Date().toISOString()
+            });
+        });
+        
+        // Check if this page was redirected from auth
+        console.log('Current URL:', window.location.href);
+        console.log('Referrer:', document.referrer);
+        
+        // Add a flag to localStorage to track load attempts
+        const loadAttempts = localStorage.getItem('dashboard_load_attempts') || '0';
+        const attempts = parseInt(loadAttempts) + 1;
+        localStorage.setItem('dashboard_load_attempts', attempts.toString());
+        console.log('Dashboard load attempt #', attempts);
+    </script>
+    
+    <!-- Initialize Firebase properly -->
+    <script>
+        // Your Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyAq9DUyvi9d5lxlNCz3JjFEVqpt1uFKyKs",
+            authDomain: "safewomen-b3cd6.firebaseapp.com",
+            projectId: "safewomen-b3cd6",
+            storageBucket: "safewomen-b3cd6.appspot.com",
+            messagingSenderId: "203857390402",
+            appId: "1:203857390402:web:0c9330a8834a627a3436db"
+        };
+
+        // Initialize Firebase ONLY ONCE
+        try {
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+                console.log("Firebase initialized in dashboard.html");
+            }
+        } catch (error) {
+            console.error("Error initializing Firebase:", error);
+        }
+    </script>
+    
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBzOkTzsKOkKwcaPJqxHF8eMqm5dc3LsMg"></script>
+    <!-- Load firebase-config.js after initializing Firebase -->
+    <script src="firebase-config.js"></script>
+    
+    <!-- CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    
+    <style>
+        :root {
+            --gradient-start: #FF9A8B;
+            --gradient-middle: #FF6B6B;
+            --gradient-end: #FFA07A;
+            --text-dark: #2D3436;
+            --text-light: #ffffff;
+            --sidebar-width: 280px;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background: #f8fafc;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .gradient-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(-45deg, var(--gradient-start), var(--gradient-middle), var(--gradient-end));
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            opacity: 0.05;
+        }
+
+        .gradient-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
+                rgba(255, 255, 255, 0.1) 0%, 
+                rgba(255, 255, 255, 0.05) 25%, 
+                transparent 50%);
+            pointer-events: none;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            border-right: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            transition: transform 0.3s var(--transition-smooth);
+            z-index: 1000;
+        }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+            transition: margin-left 0.3s var(--transition-smooth);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 1rem;
+            object-fit: cover;
+            border: 2px solid var(--gradient-middle);
+        }
+
+        .user-info h6 {
+            margin: 0;
+            font-weight: 600;
+            font-size: 1.1rem;
+            max-width: 180px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-info small {
+            color: var(--text-light);
+            font-weight: 500;
+            max-width: 180px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: block;
+        }
+
+        .nav-link {
+            padding: 1rem 1.25rem;
+            border-radius: 12px;
+            color: var(--text-dark);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-middle));
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .nav-link i {
+            width: 24px;
+            font-size: 1.2rem;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+            justify-content: center;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .action-button {
+            background: white;
+            border: none;
+            padding: 1.25rem;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .action-button:hover {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-middle));
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px rgba(255, 107, 107, 0.2);
+        }
+
+        .action-button i {
+            font-size: 1.5rem;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        .stat-card i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-middle));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-card h3 {
+            font-weight: 700;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-middle));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .map-container {
+            height: 400px;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .alert-item {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            background: #fff;
+            border: 1px solid #ddd;
+            transition: all 0.3s ease;
+        }
+
+        .alert-item:hover {
+            transform: translateX(5px);
+            border-color: #ff6b6b;
+            background: linear-gradient(135deg, #ff9a8b, #ff6b6b);
+            color: white;
+        }
+
+        .alert-item:hover .text-muted {
+            color: rgba(255, 255, 255, 0.8) !important;
+        }
+
+        .mobile-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1001;
+            background: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-toggle {
+                display: block;
+            }
+
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 576px) {
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .safety-tip-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.25rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .safety-tip-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .tip-content {
+            display: none;
+            padding-top: 0.5rem;
+        }
+
+        .tip-toggle {
+            transition: transform 0.3s ease;
+        }
+
+        .tip-toggle.active {
+            transform: rotate(180deg);
+        }
+
+        .safety-tip-card.active {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-middle));
+            color: white;
+        }
+
+        .safety-tip-card.active .text-muted,
+        .safety-tip-card.active .text-primary,
+        .safety-tip-card.active .text-success,
+        .safety-tip-card.active .text-warning {
+            color: rgba(255, 255, 255, 0.8) !important;
+        }
+
+        .safety-tip-card.active hr {
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .emergency-link {
+            color: inherit;
+            text-decoration: none;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .emergency-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .safety-tip-card.active .emergency-link {
+            color: white;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .safety-tip-card.active .emergency-link:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        #reportButton {
+            background-color: #FF4136; /* Red color for visibility */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #reportButton:hover {
+            background-color: #FF6B6B; /* Lighter red on hover */
+        }
+    </style>
+</head>
+<body>
+    <div class="gradient-background"></div>
+    <div class="gradient-overlay"></div>
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Mobile Toggle Button -->
+    <button class="mobile-toggle" id="mobileToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="loader">Loading...</div>
+<div id="dashboard" style="display:none;">
+  Welcome, <span id="user-name"></span>
+</div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="user-profile glass-card">
+            <img src="https://ui-avatars.com/api/?name=User&background=FF9A8B&color=fff" alt="User Avatar" class="user-avatar">
+            <div class="user-info">
+                <h6>Loading...</h6>
+                <small class="user-email">Loading...</small>
+            </div>
+        </div>
+
+        <ul class="sidebar-nav" style="list-style: none; padding: 0;">
+            <li class="nav-item">
+                <a href="dashboard.html" class="nav-link active">
+                    <i class="fas fa-home"></i>
+                    Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="safety-map.html" class="nav-link">
+                    <i class="fas fa-map-marked-alt"></i>
+                    Safety Map
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="live-tracker.html" class="nav-link">
+                    <i class="fas fa-location-arrow"></i>
+                    Live Tracker
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="community.html" class="nav-link">
+                    <i class="fas fa-users"></i>
+                    Community
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="chatbot.html" class="nav-link">
+                    <i class="fas fa-comment-dots"></i>
+                    Chatbot
+                </a>
+            </li>
+            <li class="nav-item mt-auto">
+                <a href="auth.html?action=logout" class="nav-link" id="logoutLink" onclick="handleLogout(event)">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="fw-bold">Welcome back, Sarah!</h4>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <button class="action-button glass-card" onclick="window.location.href='live-tracker.html'">
+                <i class="fas fa-location-arrow"></i>
+                Live Tracker
+            </button>
+            <button class="action-button glass-card" onclick="window.location.href='/chatbot'">
+                <i class="fas fa-comments"></i>
+                Chatbot Assistant
+            </button>
+            <button class="action-button glass-card">
+                <i class="fas fa-exclamation-triangle"></i>
+                Emergency Alert
+            </button>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-container">
+            <div class="stat-card glass-card">
+                <i class="fas fa-walking"></i>
+                <h3 class="counter">2500+</h3>
+                <p class="mb-0">Safe Trips</p>
+            </div>
+            <div class="stat-card glass-card">
+                <i class="fas fa-map-marker-alt"></i>
+                <h3 class="counter">150+</h3>
+                <p class="mb-0">Safe Zones</p>
+            </div>
+            <div class="stat-card glass-card">
+                <i class="fas fa-users"></i>
+                <h3 class="counter">500</h3>
+                <p class="mb-0">Community Members</p>
+            </div>
+            <div class="stat-card glass-card">
+                <i class="fas fa-shield-alt"></i>
+                <h3 class="counter">98%</h3>
+                <p class="mb-0">Safety Score</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Safety Map -->
+            <div class="col-lg-8 mb-4">
+                <div class="glass-card mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="fw-bold mb-0">Safety Map</h5>
+                        <div class="btn-group">
+                            <button class="btn btn-light" onclick="setMapStyle('day')">Day</button>
+                            <button class="btn btn-light" onclick="setMapStyle('night')">Night</button>
+                        </div>
+                    </div>
+                    <div id="googleMap" class="map-container" style="height: 400px;"></div>
+                </div>
+            </div>
+
+            <!-- Recent Alerts -->
+            <div class="col-lg-4 mb-4">
+                <div class="glass-card">
+                    <h5 class="fw-bold mb-4">Recent Alerts</h5>
+                    <div class="alert-history">
+                        <!-- New alerts will be added here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Safety Tips -->
+        <div class="glass-card">
+            <h5 class="fw-bold mb-4">Safety Tips & Resources</h5>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <div class="safety-tip-card" onclick="toggleTipContent('emergency')">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-phone-alt text-primary me-3 fa-2x"></i>
+                            <div>
+                                <h6 class="fw-bold mb-1">Emergency Contacts</h6>
+                                <p class="mb-0 text-muted">Quick access to help</p>
+                            </div>
+                            <i class="fas fa-chevron-down ms-auto tip-toggle"></i>
+                        </div>
+                        <div class="tip-content" id="emergency-content">
+                            <hr class="my-3">
+                            <ul class="list-unstyled">
+                                <li class="mb-2"><strong>Police:</strong> <a href="tel:100" class="emergency-link">100</a></li>
+                                <li class="mb-2"><strong>Women's Helpline:</strong> <a href="tel:1091" class="emergency-link">1091</a></li>
+                                <li class="mb-2"><strong>Ambulance:</strong> <a href="tel:108" class="emergency-link">108</a></li>
+                                <li><strong>SafeHer Support:</strong> <a href="tel:18001234567" class="emergency-link">1800-123-4567</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="safety-tip-card" onclick="toggleTipContent('guidelines')">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-book text-success me-3 fa-2x"></i>
+                            <div>
+                                <h6 class="fw-bold mb-1">Safety Guidelines</h6>
+                                <p class="mb-0 text-muted">Best practices</p>
+                            </div>
+                            <i class="fas fa-chevron-down ms-auto tip-toggle"></i>
+                        </div>
+                        <div class="tip-content" id="guidelines-content">
+                            <hr class="my-3">
+                            <ul class="list-unstyled">
+                                <li class="mb-2">✓ Share your live location with trusted contacts</li>
+                                <li class="mb-2">✓ Stay in well-lit and populated areas</li>
+                                <li class="mb-2">✓ Keep emergency contacts on speed dial</li>
+                                <li>✓ Use the buddy system when possible</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="safety-tip-card" onclick="toggleTipContent('support')">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-hands-helping text-warning me-3 fa-2x"></i>
+                            <div>
+                                <h6 class="fw-bold mb-1">Support Resources</h6>
+                                <p class="mb-0 text-muted">Community help</p>
+                            </div>
+                            <i class="fas fa-chevron-down ms-auto tip-toggle"></i>
+                        </div>
+                        <div class="tip-content" id="support-content">
+                            <hr class="my-3">
+                            <ul class="list-unstyled">
+                                <li class="mb-2">🤝 24/7 Community Support Chat</li>
+                                <li class="mb-2">🏥 Nearby Safe Shelters</li>
+                                <li class="mb-2">👥 Support Group Meetings</li>
+                                <li>📱 SafeHer Mobile App Support</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Modal -->
+    <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="reportModalLabel">Report an Issue</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="reportForm">
+                        <div class="mb-3">
+                            <label for="reportType" class="form-label">Type of Issue</label>
+                            <select class="form-select" id="reportType" required>
+                                <option value="">Select type of issue</option>
+                                <option value="Harassment">Harassment</option>
+                                <option value="Theft">Theft</option>
+                                <option value="Assault">Assault</option>
+                                <option value="Suspicious Activity">Suspicious Activity</option>
+                                <option value="Poor Lighting">Poor Lighting</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="reportRiskLevel" class="form-label">Risk Level</label>
+                            <select class="form-select" id="reportRiskLevel" required>
+                                <option value="">Select risk level</option>
+                                <option value="1">Low Risk</option>
+                                <option value="2">Medium Risk</option>
+                                <option value="3">High Risk</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="reportLocation" class="form-label">Location</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="reportLocation" placeholder="Enter location or use current location" required>
+                                <button type="button" class="btn btn-outline-secondary" id="getLocationButton">
+                                    <i class="fas fa-location-arrow"></i> Use Current Location
+                                </button>
+                            </div>
+                            <small class="text-muted">Start typing to search for a location</small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="reportDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="reportDescription" rows="3" placeholder="Please provide details about the incident" required></textarea>
+                        </div>
+                        <button type="submit" class="btn" style="background: linear-gradient(135deg, var(--gradient-start), var(--gradient-middle)); color: white;">
+                            Submit Report
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Button -->
+    <button id="reportButton" class="btn" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000; border-radius: 50px; padding: 10px 20px; background: linear-gradient(135deg, var(--gradient-start), var(--gradient-middle)); color: white;">
+        <i class="fas fa-exclamation-triangle"></i> Report Issue
+    </button>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Add function to handle logout
+        function handleLogout(event) {
+            event.preventDefault();
+            console.log('Logout clicked');
+            
+            // Clear user session data
+            localStorage.removeItem('safeher_user');
+            sessionStorage.clear();
+            
+            // Sign out of Firebase
+            if (typeof firebase !== 'undefined' && firebase.auth) {
+                firebase.auth().signOut()
+                    .then(() => {
+                        console.log('Successfully signed out');
+                        window.location.href = 'auth.html?action=logout';
+                    })
+                    .catch(error => {
+                        console.error('Error signing out:', error);
+                        // Redirect anyway
+                        window.location.href = 'auth.html?action=logout';
+                    });
+            } else {
+                console.warn('Firebase not available, redirecting without signout');
+                window.location.href = 'auth.html?action=logout';
+            }
+            
+            return false;
+        }
+        
+        // Moving gradient effect
+        document.addEventListener('mousemove', (e) => {
+            const x = e.clientX;
+            const y = e.clientY;
+            document.documentElement.style.setProperty('--mouse-x', `${x}px`);
+            document.documentElement.style.setProperty('--mouse-y', `${y}px`);
+        });
+
+        // Handle user data loading
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOMContentLoaded fired - checking authentication');
+            
+            // Check if Firebase is available
+            if (typeof firebase === 'undefined') {
+                console.error('Firebase is not defined - did firebase-config.js load correctly?');
+                alert('Error: Firebase is not loaded. Please refresh the page or check your internet connection.');
+                return;
+            } else {
+                console.log('Firebase is available');
+            }
+            
+            // Check if user data is available in localStorage
+            const userData = localStorage.getItem('safeher_user');
+            console.log('User data in localStorage:', userData ? 'Present' : 'Not found');
+            
+            if (!userData) {
+                // If no user data, redirect to login
+                console.warn('No user data found in localStorage - redirecting to auth.html');
+                window.location.href = 'auth.html';
+                return;
+            }
+            
+            try {
+                // Try to parse the user data to make sure it's valid
+                const user = JSON.parse(userData);
+                console.log('User data parsed successfully:', user.displayName, user.email);
+                
+                // Update page title with user's name
+                const welcomeElement = document.querySelector('h4.fw-bold');
+                if (welcomeElement) {
+                    welcomeElement.textContent = `Welcome back, ${user.displayName}!`;
+                    console.log('Welcome message updated');
+                } else {
+                    console.warn('Welcome element not found');
+                }
+                
+                // Update user profile in sidebar
+                const userNameElement = document.querySelector('.user-info h6');
+                const userEmailElement = document.querySelector('.user-email');
+                const userAvatarElement = document.querySelector('.user-avatar');
+                
+                if (userNameElement) {
+                    userNameElement.textContent = user.displayName;
+                }
+                
+                if (userEmailElement) {
+                    userEmailElement.textContent = user.email;
+                }
+                
+                if (userAvatarElement) {
+                    userAvatarElement.src = user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName)}&background=FF9A8B&color=fff`;
+                }
+                
+                console.log('Sidebar user profile updated');
+                
+                // Listen for auth state changes
+                console.log('Setting up Firebase auth state listener');
+                firebase.auth().onAuthStateChanged((firebaseUser) => {
+                    console.log('Auth state changed:', firebaseUser ? 'User logged in' : 'No user');
+                    
+                    if (!firebaseUser) {
+                        // User is not logged in, redirect to login page
+                        console.warn('Firebase auth reports no logged in user - redirecting to auth.html');
+                        localStorage.removeItem('safeher_user'); // Clean up invalid state
+                        window.location.href = 'auth.html';
+                    } else {
+                        console.log('Firebase auth confirms user is logged in:', firebaseUser.email);
+                    }
+                });
+            } catch (error) {
+                console.error('Error parsing user data from localStorage:', error);
+                localStorage.removeItem('safeher_user'); // Clean up corrupted data
+                window.location.href = 'auth.html';
+            }
+        });
+
+        // Mobile sidebar toggle
+        const sidebar = document.getElementById('sidebar');
+        const mobileToggle = document.getElementById('mobileToggle');
+        const overlay = document.getElementById('overlay');
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+            mobileToggle.innerHTML = sidebar.classList.contains('active') ? 
+                '<i class="fas fa-times"></i>' : 
+                '<i class="fas fa-bars"></i>';
+        }
+
+        mobileToggle.addEventListener('click', toggleSidebar);
+        overlay.addEventListener('click', toggleSidebar);
+
+        // Close sidebar when clicking a link on mobile
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 768) {
+                    toggleSidebar();
+                }
+            });
+        });
+
+        // Initialize Google Maps
+        let map;
+
+        function initMap() {
+            try {
+                console.log('Initializing Google Map...');
+                const mapElement = document.getElementById("googleMap");
+                
+                if (!mapElement) {
+                    console.warn('Map container not found!');
+                    return;
+                }
+                
+                map = new google.maps.Map(mapElement, {
+                    center: { lat: 12.872926, lng: 77.576006 }, // Default center (Bangalore)
+                    zoom: 14,
+                    styles: [] // Default to day style
+                });
+
+                // Check if map is loaded
+                google.maps.event.addListenerOnce(map, "idle", function () {
+                    console.log("Google Map Loaded Successfully!");
+                });
+            } catch (error) {
+                console.error('Error initializing map:', error);
+                // Create fallback map display
+                const mapElement = document.getElementById("googleMap");
+                if (mapElement) {
+                    mapElement.innerHTML = `
+                        <div style="height:100%; display:flex; justify-content:center; align-items:center; flex-direction:column; text-align:center; background:#f8f9fa;">
+                            <i class="fas fa-map-marked-alt" style="font-size:48px; color:#ff6b6b; margin-bottom:10px;"></i>
+                            <p>Map could not be loaded.</p>
+                            <button class="btn btn-sm btn-primary" onclick="location.reload()">Retry</button>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        function setMapStyle(style) {
+            try {
+                if (!map) {
+                    console.warn('Map not initialized, cannot set style');
+                    return;
+                }
+                
+                const dayStyle = [];
+                const nightStyle = [
+                    { elementType: 'geometry', stylers: [{ color: '#212121' }] },
+                    { elementType: 'labels.icon', stylers: [{ visibility: 'off' }] },
+                    { elementType: 'labels.text.fill', stylers: [{ color: '#757575' }] },
+                    { elementType: 'labels.text.stroke', stylers: [{ color: '#212121' }] },
+                    { featureType: 'administrative.land_parcel', elementType: 'labels.text.fill', stylers: [{ color: '#BDBDBD' }] },
+                    { featureType: 'poi', elementType: 'labels.text.fill', stylers: [{ color: '#757575' }] },
+                    { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#1C1C1C' }] },
+                    { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#000000' }] }
+                ];
+
+                map.setOptions({ styles: style === 'night' ? nightStyle : dayStyle });
+            } catch (error) {
+                console.error('Error setting map style:', error);
+            }
+        }
+
+        // Initialize the map when the page loads
+        window.addEventListener('load', function() {
+            console.log('Window load event fired, initializing map...');
+            setTimeout(initMap, 500); // Small delay to ensure everything is loaded
+        });
+        
+        // Fallback initialization if window load doesn't trigger
+        setTimeout(function() {
+            if (!map) {
+                console.warn('Map not initialized by window load event, trying fallback initialization');
+                initMap();
+            }
+        }, 2000);
+
+        // Animate counters
+        function animateCounter(element) {
+            const target = parseInt(element.textContent.replace(/[^\d]/g, ''));
+            const prefix = element.textContent.replace(/[\d]/g, '').split('+')[0] || '';
+            const suffix = element.textContent.includes('+') ? '+' : '';
+            let current = 0;
+            const increment = target / 50;
+            const duration = 1500;
+            const stepTime = duration / 50;
+
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                element.textContent = prefix + Math.floor(current) + suffix;
+            }, stepTime);
+        }
+
+        // Animate all counters when they come into view
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateCounter(entry.target);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('.counter').forEach(counter => {
+            observer.observe(counter);
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+                mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+
+        // Safety Tips Toggle Functionality
+        function toggleTipContent(id) {
+            const card = document.querySelector(`#${id}-content`).closest('.safety-tip-card');
+            const content = document.getElementById(`${id}-content`);
+            const toggle = card.querySelector('.tip-toggle');
+            
+            // Close all other cards
+            document.querySelectorAll('.safety-tip-card').forEach(otherCard => {
+                if (otherCard !== card) {
+                    otherCard.classList.remove('active');
+                    otherCard.querySelector('.tip-content').style.display = 'none';
+                    otherCard.querySelector('.tip-toggle').classList.remove('active');
+                }
+            });
+
+            // Toggle current card
+            const isExpanding = content.style.display !== 'block';
+            
+            card.classList.toggle('active', isExpanding);
+            toggle.classList.toggle('active', isExpanding);
+            
+            if (isExpanding) {
+                content.style.display = 'block';
+                content.style.opacity = '0';
+                setTimeout(() => {
+                    content.style.transition = 'opacity 0.3s ease';
+                    content.style.opacity = '1';
+                }, 10);
+            } else {
+                content.style.opacity = '0';
+                setTimeout(() => {
+                    content.style.display = 'none';
+                }, 300);
+            }
+        }
+
+        // Add hover effect for safety tip cards
+        document.querySelectorAll('.safety-tip-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                if (!card.classList.contains('active')) {
+                    card.style.transform = 'translateY(-2px)';
+                }
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                if (!card.classList.contains('active')) {
+                    card.style.transform = 'translateY(0)';
+                }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Show the modal when the report button is clicked
+            document.getElementById('reportButton').addEventListener('click', function() {
+                const reportModal = new bootstrap.Modal(document.getElementById('reportModal'));
+                reportModal.show();
+            });
+
+            // Handle form submission
+            document.getElementById('reportForm').addEventListener('submit', function(event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                // Get form data
+                const type = document.getElementById('reportType').value;
+                const riskLevel = parseInt(document.getElementById('reportRiskLevel').value);
+                const location = document.getElementById('reportLocation').value;
+                const description = document.getElementById('reportDescription').value;
+
+                // Create a new alert item
+                const alertHistory = document.querySelector('.alert-history');
+                const newAlert = document.createElement('div');
+                newAlert.classList.add('alert-item');
+                newAlert.innerHTML = `
+                    <i class="fas fa-exclamation-circle text-warning"></i>
+                    <div>
+                        <h6 class="mb-1">${type}</h6>
+                        <small class="text-muted">Location: ${location}</small>
+                        <p>${description}</p>
+                    </div>
+                `;
+
+                // Add the new alert to the top of the Recent Alerts section
+                alertHistory.prepend(newAlert);
+
+                // Close the modal
+                const reportModal = bootstrap.Modal.getInstance(document.getElementById('reportModal'));
+                reportModal.hide();
+
+                // Reset the form
+                document.getElementById('reportForm').reset();
+                
+                // Show success message
+                alert('Report submitted successfully!');
+            });
+
+            // Get current location
+            document.getElementById('getLocationButton').addEventListener('click', function() {
+                if (navigator.geolocation) {
+                    // Change button state to indicate loading
+                    this.disabled = true;
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Getting location...';
+                    
+                    navigator.geolocation.getCurrentPosition(
+                        // Success callback
+                        position => {
+                            const lat = position.coords.latitude;
+                            const lng = position.coords.longitude;
+                            
+                            // Use reverse geocoding to get address if Google Maps API is available
+                            if (typeof google !== 'undefined' && google.maps && google.maps.Geocoder) {
+                                const geocoder = new google.maps.Geocoder();
+                                geocoder.geocode({ location: { lat, lng } }, (results, status) => {
+                                    if (status === 'OK' && results[0]) {
+                                        const address = results[0].formatted_address;
+                                        const locationInput = document.getElementById('reportLocation');
+                                        locationInput.value = `${address} (Lat: ${lat}, Lng: ${lng})`;
+                                    } else {
+                                        const locationInput = document.getElementById('reportLocation');
+                                        locationInput.value = `Current Location (Lat: ${lat}, Lng: ${lng})`;
+                                    }
+                                    
+                                    // Restore button
+                                    this.innerHTML = '<i class="fas fa-location-arrow"></i> Use Current Location';
+                                    this.disabled = false;
+                                });
+                            } else {
+                                // If Google Maps API is not available, just show coordinates
+                                document.getElementById('reportLocation').value = `Current Location (Lat: ${lat}, Lng: ${lng})`;
+                                
+                                // Restore button
+                                this.innerHTML = '<i class="fas fa-location-arrow"></i> Use Current Location';
+                                this.disabled = false;
+                            }
+                        },
+                        // Error callback
+                        error => {
+                            console.error('Error getting location:', error);
+                            let errorMessage = 'Unable to retrieve your location. ';
+                            
+                            switch(error.code) {
+                                case error.PERMISSION_DENIED:
+                                    errorMessage += 'Please enable location access in your browser settings.';
+                                    break;
+                                case error.POSITION_UNAVAILABLE:
+                                    errorMessage += 'Location information is unavailable.';
+                                    break;
+                                case error.TIMEOUT:
+                                    errorMessage += 'The request to get location timed out.';
+                                    break;
+                                default:
+                                    errorMessage += 'Please enter your location manually.';
+                            }
+                            
+                            // Restore button
+                            this.innerHTML = '<i class="fas fa-location-arrow"></i> Use Current Location';
+                            this.disabled = false;
+                            
+                            // Show error
+                            alert(errorMessage);
+                        },
+                        // Options
+                        {
+                            enableHighAccuracy: true,
+                            timeout: 10000,
+                            maximumAge: 0
+                        }
+                    );
+                } else {
+                    alert('Geolocation is not supported by your browser. Please enter your location manually.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
